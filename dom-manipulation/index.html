@@ -78,6 +78,7 @@
         gap: 10px;
         margin-bottom: 30px;
         flex-wrap: wrap;
+        justify-content: center;
       }
 
       button {
@@ -90,6 +91,8 @@
         font-size: 1em;
         transition: all 0.3s ease;
         font-weight: 600;
+        flex: 1;
+        min-width: 140px;
       }
 
       button:hover {
@@ -100,6 +103,22 @@
 
       button:active {
         transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .btn-danger {
+        background: #dc3545;
+      }
+
+      .btn-danger:hover {
+        background: #c82333;
       }
 
       .add-quote-form {
@@ -140,14 +159,6 @@
         margin-top: 20px;
       }
 
-      .btn-secondary {
-        background: #6c757d;
-      }
-
-      .btn-secondary:hover {
-        background: #5a6268;
-      }
-
       .category-filter {
         display: flex;
         gap: 10px;
@@ -173,6 +184,26 @@
         font-size: 0.9em;
         margin-bottom: 20px;
       }
+
+      .storage-info {
+        margin-top: 30px;
+        padding: 15px;
+        background: #e7f3ff;
+        border-left: 4px solid #2196f3;
+        border-radius: 8px;
+        font-size: 0.9em;
+        color: #0c5460;
+      }
+
+      .storage-info strong {
+        color: #004085;
+      }
+
+      @media (max-width: 600px) {
+        .controls button {
+          flex: 1 1 100%;
+        }
+      }
     </style>
   </head>
   <body>
@@ -190,9 +221,16 @@
       <div class="controls">
         <button id="newQuote">Show New Quote</button>
         <button id="toggleForm">Add New Quote</button>
+        <button id="exportBtn">Export Quotes</button>
+        <button id="importBtn" class="btn-secondary">Import Quotes</button>
+        <button id="clearBtn" class="btn-danger">Clear All</button>
       </div>
 
+      <input type="file" id="importFile" accept=".json" style="display: none" />
+
       <div id="formContainer"></div>
+
+      <div class="storage-info" id="storageInfo"></div>
     </div>
 
     <script src="script.js"></script>
