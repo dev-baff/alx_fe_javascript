@@ -159,23 +159,33 @@
         margin-top: 20px;
       }
 
-      .category-filter {
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
+      /* Task 2: Category Filter Dropdown */
+      .filter-section {
         margin-bottom: 20px;
       }
 
-      .category-btn {
-        background: #e9ecef;
+      .filter-label {
+        display: block;
         color: #495057;
-        padding: 8px 16px;
-        font-size: 0.9em;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95em;
       }
 
-      .category-btn.active {
-        background: #667eea;
-        color: white;
+      select {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1em;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.3s ease;
+      }
+
+      select:focus {
+        outline: none;
+        border-color: #667eea;
       }
 
       .stats {
@@ -212,7 +222,15 @@
 
       <div class="stats" id="stats"></div>
 
-      <div class="category-filter" id="categoryFilter"></div>
+      <!-- Category Filter Dropdown -->
+      <div class="filter-section">
+        <label class="filter-label" for="categoryFilter"
+          >Filter by Category:</label
+        >
+        <select id="categoryFilter" onchange="filterQuotes()">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
 
       <div id="quoteDisplay">
         <div class="empty-state">Click "Show New Quote" to display a quote</div>
