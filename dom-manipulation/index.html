@@ -37,6 +37,208 @@
         font-size: 2em;
       }
 
+      /* Server Sync Status Bar - REMOVED FOR MINIMAL UI */
+
+      /* Notification Toast */
+      .notification-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        max-width: 400px;
+      }
+
+      .notification {
+        background: white;
+        padding: 16px 20px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        margin-bottom: 12px;
+        border-left: 5px solid #667eea;
+        animation: slideIn 0.4s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .notification.success {
+        border-left-color: #28a745;
+      }
+      .notification.warning {
+        border-left-color: #ffc107;
+      }
+      .notification.error {
+        border-left-color: #dc3545;
+      }
+      .notification.info {
+        border-left-color: #17a2b8;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(420px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      .notification-icon {
+        font-size: 1.5em;
+        flex-shrink: 0;
+      }
+
+      .notification-content {
+        flex: 1;
+      }
+
+      .notification-title {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #333;
+        font-size: 0.95em;
+      }
+
+      .notification-message {
+        font-size: 0.85em;
+        color: #666;
+        line-height: 1.4;
+      }
+
+      /* Conflict Resolution Modal */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        animation: fadeIn 0.3s ease;
+      }
+
+      .modal-overlay.active {
+        display: flex;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .modal {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 650px;
+        width: 90%;
+        max-height: 85vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideUp 0.4s ease;
+      }
+
+      @keyframes slideUp {
+        from {
+          transform: translateY(50px);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .modal-header {
+        font-size: 1.5em;
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .modal-description {
+        color: #666;
+        margin-bottom: 24px;
+        font-size: 0.95em;
+        line-height: 1.5;
+      }
+
+      .conflict-item {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #e0e0e0;
+      }
+
+      .conflict-header {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 16px;
+        font-size: 1.05em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .conflict-options {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .conflict-option {
+        padding: 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+      }
+
+      .conflict-option:hover {
+        border-color: #667eea;
+        background: #f0f4ff;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+      }
+
+      .conflict-option.selected {
+        border-color: #667eea;
+        background: #667eea;
+        color: white;
+      }
+
+      .conflict-option-label {
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+      }
+
+      .conflict-option-text {
+        font-size: 0.9em;
+        font-style: italic;
+        line-height: 1.4;
+      }
+
+      .conflict-option-meta {
+        font-size: 0.75em;
+        margin-top: 8px;
+        opacity: 0.8;
+      }
+
       #quoteDisplay {
         background: #f8f9fa;
         border-left: 4px solid #667eea;
@@ -105,6 +307,12 @@
         transform: translateY(0);
       }
 
+      button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+      }
+
       .btn-secondary {
         background: #6c757d;
       }
@@ -119,6 +327,14 @@
 
       .btn-danger:hover {
         background: #c82333;
+      }
+
+      .btn-success {
+        background: #28a745;
+      }
+
+      .btn-success:hover {
+        background: #218838;
       }
 
       .add-quote-form {
@@ -159,7 +375,6 @@
         margin-top: 20px;
       }
 
-      /* Task 2: Category Filter Dropdown */
       .filter-section {
         margin-bottom: 20px;
       }
@@ -213,16 +428,48 @@
         .controls button {
           flex: 1 1 100%;
         }
+
+        .notification-container {
+          left: 20px;
+          right: 20px;
+          max-width: none;
+        }
+
+        .conflict-options {
+          grid-template-columns: 1fr;
+        }
       }
     </style>
   </head>
   <body>
+    <!-- Notification Container -->
+    <div class="notification-container" id="notificationContainer"></div>
+
+    <!-- Conflict Resolution Modal -->
+    <div class="modal-overlay" id="conflictModal">
+      <div class="modal">
+        <div class="modal-header">⚠️ Resolve Data Conflicts</div>
+        <div class="modal-description">
+          Conflicts detected between your local data and server data. Please
+          choose which version to keep for each conflict.
+        </div>
+        <div id="conflictContent"></div>
+        <div class="form-actions">
+          <button onclick="applyConflictResolution()" class="btn-success">
+            Apply Selected Changes
+          </button>
+          <button onclick="closeConflictModal()" class="btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
     <div class="container">
-      <h1>Dynamic Quote Generator</h1>
+      <h1>📝 Dynamic Quote Generator</h1>
 
       <div class="stats" id="stats"></div>
 
-      <!-- Category Filter Dropdown -->
       <div class="filter-section">
         <label class="filter-label" for="categoryFilter"
           >Filter by Category:</label
@@ -237,11 +484,10 @@
       </div>
 
       <div class="controls">
-        <button id="newQuote">Show New Quote</button>
-        <button id="toggleForm">Add New Quote</button>
-        <button id="exportBtn">Export Quotes</button>
-        <button id="importBtn" class="btn-secondary">Import Quotes</button>
-        <button id="clearBtn" class="btn-danger">Clear All</button>
+        <button id="newQuote">🎲 Show New Quote</button>
+        <button id="toggleForm">➕ Add New Quote</button>
+        <button id="exportBtn">💾 Export Quotes</button>
+        <button id="importBtn" class="btn-secondary">📁 Import Quotes</button>
       </div>
 
       <input type="file" id="importFile" accept=".json" style="display: none" />
