@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dynamic Quote Generator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        max-width: 700px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      }
+
+      h1 {
+        color: #667eea;
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 2em;
+      }
+
+      #quoteDisplay {
+        background: #f8f9fa;
+        border-left: 4px solid #667eea;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .quote-text {
+        font-size: 1.3em;
+        font-style: italic;
+        color: #333;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .quote-category {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.9em;
+        align-self: flex-start;
+      }
+
+      .empty-state {
+        text-align: center;
+        color: #999;
+        font-style: italic;
+      }
+
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      button:hover {
+        background: #5568d3;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      button:active {
+        transform: translateY(0);
+      }
+
+      .add-quote-form {
+        background: #f8f9fa;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+
+      .form-title {
+        color: #667eea;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        font-weight: 600;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1em;
+        transition: border-color 0.3s ease;
+      }
+
+      input[type="text"]:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .form-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+      }
+
+      .btn-secondary {
+        background: #6c757d;
+      }
+
+      .btn-secondary:hover {
+        background: #5a6268;
+      }
+
+      .category-filter {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+
+      .category-btn {
+        background: #e9ecef;
+        color: #495057;
+        padding: 8px 16px;
+        font-size: 0.9em;
+      }
+
+      .category-btn.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .stats {
+        text-align: center;
+        color: #6c757d;
+        font-size: 0.9em;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Dynamic Quote Generator</h1>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="category-filter" id="categoryFilter"></div>
+
+      <div id="quoteDisplay">
+        <div class="empty-state">Click "Show New Quote" to display a quote</div>
+      </div>
+
+      <div class="controls">
+        <button id="newQuote">Show New Quote</button>
+        <button id="toggleForm">Add New Quote</button>
+      </div>
+
+      <div id="formContainer"></div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
