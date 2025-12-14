@@ -10,31 +10,11 @@ const SERVER_URL = "https://jsonplaceholder.typicode.com/posts";
 const SYNC_INTERVAL = 30000; // 30 seconds
 
 const defaultQuotes = [
-  {
-    id: 1,
-    text: "The only way to do great work is to love what you do.",
-    category: "Motivation",
-  },
-  {
-    id: 2,
-    text: "Innovation distinguishes between a leader and a follower.",
-    category: "Leadership",
-  },
-  {
-    id: 3,
-    text: "Life is what happens when you're busy making other plans.",
-    category: "Life",
-  },
-  {
-    id: 4,
-    text: "The future belongs to those who believe in the beauty of their dreams.",
-    category: "Inspiration",
-  },
-  {
-    id: 5,
-    text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
-    category: "Success",
-  },
+  { id: 1, text: "The only way to do great work is to love what you do.", category: "Motivation" },
+  { id: 2, text: "Innovation distinguishes between a leader and a follower.", category: "Leadership" },
+  { id: 3, text: "Life is what happens when you're busy making other plans.", category: "Life" },
+  { id: 4, text: "The future belongs to those who believe in the beauty of their dreams.", category: "Inspiration" },
+  { id: 5, text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", category: "Success" },
 ];
 
 let quotes = [];
@@ -61,28 +41,28 @@ const conflictModal = document.getElementById("conflictModal");
 // NOTIFICATION SYSTEM
 // ========================================
 
-function showNotification(title, message, type = "info") {
+function showNotification(title, message, type = 'info') {
   const icons = {
-    success: "✅",
-    error: "❌",
-    warning: "⚠️",
-    info: "ℹ️",
+    success: '✅',
+    error: '❌',
+    warning: '⚠️',
+    info: 'ℹ️'
   };
 
-  const notification = document.createElement("div");
+  const notification = document.createElement('div');
   notification.className = `notification ${type}`;
   notification.innerHTML = `
-          <div class="notification-icon">${icons[type]}</div>
-          <div class="notification-content">
-            <div class="notification-title">${title}</div>
-            <div class="notification-message">${message}</div>
-          </div>
-        `;
-
+    <div class="notification-icon">${icons[type]}</div>
+    <div class="notification-content">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+  `;
+  
   notificationContainer.appendChild(notification);
-
+  
   setTimeout(() => {
-    notification.style.animation = "slideIn 0.4s ease reverse";
+    notification.style.animation = 'slideIn 0.4s ease reverse';
     setTimeout(() => notification.remove(), 400);
   }, 5000);
 }
@@ -94,30 +74,24 @@ function showNotification(title, message, type = "info") {
 async function fetchQuotesFromServer() {
   try {
     const response = await fetch(SERVER_URL);
-    if (!response.ok) throw new Error("Server response not ok");
-
+    if (!response.ok) throw new Error('Server response not ok');
+    
     const posts = await response.json();
-
+    
     // Transform posts into quote format (simulating server data)
-    // Take first 8 posts and convert them
     const serverQuotes = posts.slice(0, 8).map((post) => ({
       id: post.id,
-      text: post.title.charAt(0).toUpperCase() + post.title.slice(1) + ".",
-      category:
-        post.id % 4 === 0
-          ? "Technology"
-          : post.id % 3 === 0
-          ? "Philosophy"
-          : post.id % 2 === 0
-          ? "Wisdom"
-          : "Innovation",
+      text: post.title.charAt(0).toUpperCase() + post.title.slice(1) + '.',
+      category: post.id % 4 === 0 ? 'Technology' : 
+               post.id % 3 === 0 ? 'Philosophy' : 
+               post.id % 2 === 0 ? 'Wisdom' : 'Innovation',
       lastModified: Date.now(),
-      source: "server",
+      source: 'server'
     }));
-
+    
     return serverQuotes;
   } catch (error) {
-    console.error("Error fetching from server:", error);
+    console.error('Error fetching from server:', error);
     throw error;
   }
 }
@@ -127,269 +101,224 @@ async function postQuoteToServer(quote) {
     const response = await fetch(SERVER_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         title: quote.text,
         body: quote.category,
-        userId: 1,
-      }),
+        userId: 1
+      })
     });
 
-    if (!response.ok) throw new Error("Server response not ok");
-
+    if (!response.ok) throw new Error('Server response not ok');
+    
     const data = await response.json();
-    console.log("Quote posted to server:", data);
+    console.log('Quote posted to server:', data);
     return data;
   } catch (error) {
-    console.error("Error posting to server:", error);
+    console.error('Error posting to server:', error);
     throw error;
   }
 }
 
 function detectConflicts(localQuotes, serverQuotes) {
   const conflicts = [];
-
-  // Check for quotes that exist in both but have different content
-  serverQuotes.forEach((serverQuote) => {
-    const localMatch = localQuotes.find((q) => q.id === serverQuote.id);
-
+  
+  serverQuotes.forEach(serverQuote => {
+    const localMatch = localQuotes.find(q => q.id === serverQuote.id);
+    
     if (localMatch) {
-      // Check if text or category differs
-      if (
-        localMatch.text !== serverQuote.text ||
-        localMatch.category !== serverQuote.category
-      ) {
+      if (localMatch.text !== serverQuote.text || 
+          localMatch.category !== serverQuote.category) {
         conflicts.push({
           id: serverQuote.id,
           local: localMatch,
           server: serverQuote,
-          type: "modified",
+          type: 'modified'
         });
       }
     }
   });
-
+  
   return conflicts;
 }
 
 function mergeQuotes(localQuotes, serverQuotes, resolutions = {}) {
   const merged = [...localQuotes];
-
-  serverQuotes.forEach((serverQuote) => {
-    const localIndex = merged.findIndex((q) => q.id === serverQuote.id);
-
+  
+  serverQuotes.forEach(serverQuote => {
+    const localIndex = merged.findIndex(q => q.id === serverQuote.id);
+    
     if (localIndex >= 0) {
-      // Conflict resolution: check if there's a manual resolution
       const resolution = resolutions[serverQuote.id];
-      if (resolution === "local") {
-        // Keep local version
+      if (resolution === 'local') {
         return;
       } else {
-        // Use server version (default strategy)
         merged[localIndex] = { ...serverQuote };
       }
     } else {
-      // New quote from server - add it
       merged.push(serverQuote);
     }
   });
-
+  
   return merged;
 }
 
 function showConflictResolutionModal(conflicts) {
-  const conflictContent = document.getElementById("conflictContent");
-  conflictContent.innerHTML = "";
-
+  const conflictContent = document.getElementById('conflictContent');
+  conflictContent.innerHTML = '';
+  
   conflicts.forEach((conflict, index) => {
-    const conflictItem = document.createElement("div");
-    conflictItem.className = "conflict-item";
+    const conflictItem = document.createElement('div');
+    conflictItem.className = 'conflict-item';
     conflictItem.innerHTML = `
-            <div class="conflict-header">
-              🔄 Conflict #${index + 1} (Quote ID: ${conflict.id})
-            </div>
-            <div class="conflict-options">
-              <div class="conflict-option" data-id="${
-                conflict.id
-              }" data-choice="local">
-                <div class="conflict-option-label">📱 Keep Local Version</div>
-                <div class="conflict-option-text">"${conflict.local.text}"</div>
-                <div class="conflict-option-meta">Category: ${
-                  conflict.local.category
-                }</div>
-              </div>
-              <div class="conflict-option selected" data-id="${
-                conflict.id
-              }" data-choice="server">
-                <div class="conflict-option-label">☁️ Use Server Version</div>
-                <div class="conflict-option-text">"${
-                  conflict.server.text
-                }"</div>
-                <div class="conflict-option-meta">Category: ${
-                  conflict.server.category
-                }</div>
-              </div>
-            </div>
-          `;
+      <div class="conflict-header">
+        🔄 Conflict #${index + 1} (Quote ID: ${conflict.id})
+      </div>
+      <div class="conflict-options">
+        <div class="conflict-option" data-id="${conflict.id}" data-choice="local">
+          <div class="conflict-option-label">📱 Keep Local Version</div>
+          <div class="conflict-option-text">"${conflict.local.text}"</div>
+          <div class="conflict-option-meta">Category: ${conflict.local.category}</div>
+        </div>
+        <div class="conflict-option selected" data-id="${conflict.id}" data-choice="server">
+          <div class="conflict-option-label">☁️ Use Server Version</div>
+          <div class="conflict-option-text">"${conflict.server.text}"</div>
+          <div class="conflict-option-meta">Category: ${conflict.server.category}</div>
+        </div>
+      </div>
+    `;
     conflictContent.appendChild(conflictItem);
   });
-
-  // Add click handlers
-  document.querySelectorAll(".conflict-option").forEach((option) => {
-    option.addEventListener("click", function () {
+  
+  document.querySelectorAll('.conflict-option').forEach(option => {
+    option.addEventListener('click', function() {
       const id = this.dataset.id;
-      document.querySelectorAll(`[data-id="${id}"]`).forEach((el) => {
-        el.classList.remove("selected");
+      document.querySelectorAll(`[data-id="${id}"]`).forEach(el => {
+        el.classList.remove('selected');
       });
-      this.classList.add("selected");
+      this.classList.add('selected');
     });
   });
-
-  conflictModal.classList.add("active");
+  
+  conflictModal.classList.add('active');
 }
 
 function closeConflictModal() {
-  conflictModal.classList.remove("active");
+  conflictModal.classList.remove('active');
   pendingConflicts = [];
 }
 
 function applyConflictResolution() {
   const resolutions = {};
-  const selectedOptions = document.querySelectorAll(
-    ".conflict-option.selected"
-  );
-
-  selectedOptions.forEach((option) => {
+  const selectedOptions = document.querySelectorAll('.conflict-option.selected');
+  
+  selectedOptions.forEach(option => {
     const id = parseInt(option.dataset.id);
     const choice = option.dataset.choice;
     resolutions[id] = choice;
   });
-
-  // Fetch server quotes again and merge with resolutions
-  fetchQuotesFromServer().then((serverQuotes) => {
+  
+  fetchQuotesFromServer().then(serverQuotes => {
     quotes = mergeQuotes(quotes, serverQuotes, resolutions);
     saveQuotes();
     populateCategories();
     updateStats();
-
-    const localCount = Object.values(resolutions).filter(
-      (v) => v === "local"
-    ).length;
-    const serverCount = Object.values(resolutions).filter(
-      (v) => v === "server"
-    ).length;
-
+    
+    const localCount = Object.values(resolutions).filter(v => v === 'local').length;
+    const serverCount = Object.values(resolutions).filter(v => v === 'server').length;
+    
     showNotification(
-      "Conflicts Resolved",
+      'Conflicts Resolved',
       `Applied ${localCount} local and ${serverCount} server versions`,
-      "success"
+      'success'
     );
-
+    
     closeConflictModal();
-    updateSyncStatus(
-      "synced",
-      `Last synced: ${new Date().toLocaleTimeString()}`
-    );
   });
 }
 
-async function syncWithServer() {
+async function syncQuotes() {
   if (isSyncing) {
-    showNotification(
-      "Sync in Progress",
-      "Please wait for current sync to complete",
-      "warning"
-    );
     return;
   }
-
+  
   isSyncing = true;
-  updateSyncStatus("syncing", "Syncing with server...");
-
+  
   try {
     const serverQuotes = await fetchQuotesFromServer();
     const conflicts = detectConflicts(quotes, serverQuotes);
-
+    
     if (conflicts.length > 0) {
-      // Store conflicts and show resolution UI
       pendingConflicts = conflicts;
-      updateSyncStatus(
-        "synced",
-        `Sync complete - ${conflicts.length} conflict(s) found`
-      );
       showNotification(
-        "Conflicts Detected",
+        'Conflicts Detected',
         `Found ${conflicts.length} conflict(s). Please resolve them to complete sync.`,
-        "warning"
+        'warning'
       );
       showConflictResolutionModal(conflicts);
     } else {
-      // No conflicts - merge automatically (server takes precedence)
       const beforeCount = quotes.length;
       quotes = mergeQuotes(quotes, serverQuotes);
       const afterCount = quotes.length;
       const newQuotes = afterCount - beforeCount;
-
+      
       saveQuotes();
       populateCategories();
       updateStats();
-
-      const syncTime = new Date().toLocaleTimeString();
+      
       localStorage.setItem(LAST_SYNC_KEY, Date.now().toString());
-      updateSyncStatus("synced", `Last synced: ${syncTime}`);
-
+      
       if (newQuotes > 0) {
+        alert("Quotes synced with server!");
         showNotification(
-          "Sync Complete",
-          `Successfully synced. Added ${newQuotes} new quote(s) from server.`,
-          "success"
+          'Data Updated',
+          `${newQuotes} new quote(s) synced from server.`,
+          'success'
         );
-      } else {
-        showNotification(
-          "Sync Complete",
-          "Your data is up to date with the server.",
-          "success"
-        );
+      }
+
+      const localQuotes = quotes.filter(q => q.source === 'local' && !q.synced);
+      if (localQuotes.length > 0) {
+        for (const quote of localQuotes) {
+          try {
+            await postQuoteToServer(quote);
+            quote.synced = true;
+          } catch (error) {
+            console.error('Failed to post quote:', error);
+          }
+        }
+        saveQuotes();
+        console.log(`Posted ${localQuotes.length} local quote(s) to server`);
       }
     }
   } catch (error) {
-    updateSyncStatus("error", "Sync failed. Check connection.");
-    showNotification(
-      "Sync Error",
-      "Failed to sync with server. Will retry automatically.",
-      "error"
-    );
-    console.error("Sync error:", error);
+    console.error('Sync error:', error);
   } finally {
     isSyncing = false;
   }
 }
 
 function startPeriodicSync() {
-  // Clear any existing interval
   if (syncInterval) {
     clearInterval(syncInterval);
   }
-
-  // Periodically check for new quotes from server (every 30 seconds)
+  
   syncInterval = setInterval(() => {
-    if (!isSyncing && !conflictModal.classList.contains("active")) {
-      console.log("Periodic check: syncing with server...");
+    if (!isSyncing && !conflictModal.classList.contains('active')) {
+      console.log('Periodic check: syncing with server...');
       syncQuotes();
     }
   }, SYNC_INTERVAL);
-
-  console.log(
-    `Periodic sync started (checking every ${SYNC_INTERVAL / 1000} seconds)`
-  );
+  
+  console.log(`Periodic sync started (checking every ${SYNC_INTERVAL/1000} seconds)`);
 }
 
 function stopPeriodicSync() {
   if (syncInterval) {
     clearInterval(syncInterval);
     syncInterval = null;
-    console.log("Periodic sync stopped");
+    console.log('Periodic sync stopped');
   }
 }
 
@@ -411,11 +340,7 @@ function loadQuotes() {
   } catch (error) {
     console.error("Error loading quotes:", error);
     quotes = [...defaultQuotes];
-    showNotification(
-      "Load Error",
-      "Error loading saved quotes. Using defaults.",
-      "error"
-    );
+    showNotification('Load Error', 'Error loading saved quotes. Using defaults.', 'error');
   }
 }
 
@@ -427,17 +352,9 @@ function saveQuotes() {
   } catch (error) {
     console.error("Error saving quotes:", error);
     if (error.name === "QuotaExceededError") {
-      showNotification(
-        "Storage Full",
-        "Storage quota exceeded! Unable to save quotes.",
-        "error"
-      );
+      showNotification('Storage Full', 'Storage quota exceeded! Unable to save quotes.', 'error');
     } else {
-      showNotification(
-        "Save Error",
-        "Error saving quotes. Changes may not persist.",
-        "error"
-      );
+      showNotification('Save Error', 'Error saving quotes. Changes may not persist.', 'error');
     }
   }
 }
@@ -473,23 +390,19 @@ function loadLastViewedQuote() {
 
 function populateCategories() {
   const currentValue = categoryFilterSelect.value;
-  const categories = [...new Set(quotes.map((q) => q.category))].sort();
-
-  categoryFilterSelect.innerHTML =
-    '<option value="all">All Categories</option>';
-
-  categories.forEach((category) => {
+  const categories = [...new Set(quotes.map(q => q.category))].sort();
+  
+  categoryFilterSelect.innerHTML = '<option value="all">All Categories</option>';
+  
+  categories.forEach(category => {
     const option = document.createElement("option");
     option.value = category;
     option.textContent = category;
     categoryFilterSelect.appendChild(option);
   });
-
+  
   const savedFilter = localStorage.getItem(CATEGORY_FILTER_KEY);
-  if (
-    savedFilter &&
-    (savedFilter === "all" || categories.includes(savedFilter))
-  ) {
+  if (savedFilter && (savedFilter === "all" || categories.includes(savedFilter))) {
     categoryFilterSelect.value = savedFilter;
   } else if (categories.includes(currentValue)) {
     categoryFilterSelect.value = currentValue;
@@ -505,9 +418,7 @@ function filterQuotes() {
 
 function getFilteredQuotes() {
   const selectedCategory = categoryFilterSelect.value;
-  return selectedCategory === "all"
-    ? quotes
-    : quotes.filter((q) => q.category === selectedCategory);
+  return selectedCategory === "all" ? quotes : quotes.filter(q => q.category === selectedCategory);
 }
 
 // ========================================
@@ -527,18 +438,10 @@ function exportToJson() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showNotification(
-      "Export Complete",
-      "Quotes exported successfully",
-      "success"
-    );
+    showNotification('Export Complete', 'Quotes exported successfully', 'success');
   } catch (error) {
     console.error("Error exporting quotes:", error);
-    showNotification(
-      "Export Error",
-      "Error exporting quotes. Please try again.",
-      "error"
-    );
+    showNotification('Export Error', 'Error exporting quotes. Please try again.', 'error');
   }
 }
 
@@ -547,11 +450,7 @@ function importFromJsonFile(event) {
   if (!file) return;
 
   if (!file.name.endsWith(".json")) {
-    showNotification(
-      "Invalid File",
-      "Please select a valid JSON file.",
-      "error"
-    );
+    showNotification('Invalid File', 'Please select a valid JSON file.', 'error');
     return;
   }
 
@@ -580,9 +479,8 @@ function importFromJsonFile(event) {
         throw new Error("No valid quotes found in file");
       }
 
-      // Assign IDs to imported quotes if they don't have them
-      let maxId = Math.max(0, ...quotes.map((q) => q.id || 0));
-      validQuotes.forEach((q) => {
+      let maxId = Math.max(0, ...quotes.map(q => q.id || 0));
+      validQuotes.forEach(q => {
         if (!q.id) {
           q.id = ++maxId;
         }
@@ -610,25 +508,17 @@ function importFromJsonFile(event) {
       saveQuotes();
       populateCategories();
       updateStats();
-      showNotification(
-        "Import Complete",
-        `Successfully imported ${validQuotes.length} quotes!`,
-        "success"
-      );
+      showNotification('Import Complete', `Successfully imported ${validQuotes.length} quotes!`, 'success');
       importFile.value = "";
     } catch (error) {
       console.error("Error importing quotes:", error);
-      showNotification("Import Error", `Error: ${error.message}`, "error");
+      showNotification('Import Error', `Error: ${error.message}`, 'error');
       importFile.value = "";
     }
   };
 
   fileReader.onerror = function () {
-    showNotification(
-      "Read Error",
-      "Error reading file. Please try again.",
-      "error"
-    );
+    showNotification('Read Error', 'Error reading file. Please try again.', 'error');
     importFile.value = "";
   };
 
@@ -645,19 +535,16 @@ function updateStorageInfo() {
     const sizeKB = (quotesSize / 1024).toFixed(2);
     const selectedCategory = localStorage.getItem(CATEGORY_FILTER_KEY) || "all";
     const lastSync = localStorage.getItem(LAST_SYNC_KEY);
-    const syncTime = lastSync
-      ? new Date(parseInt(lastSync)).toLocaleString()
-      : "Never";
-
+    const syncTime = lastSync ? new Date(parseInt(lastSync)).toLocaleString() : 'Never';
+    
     storageInfo.innerHTML = `
-            <strong>💾 Storage Info:</strong> 
-            ${quotes.length} quotes (${sizeKB} KB) | 
-            Filter: ${selectedCategory} | 
-            Last sync: ${syncTime}
-          `;
+      <strong>💾 Storage Info:</strong> 
+      ${quotes.length} quotes (${sizeKB} KB) | 
+      Filter: ${selectedCategory} | 
+      Last sync: ${syncTime}
+    `;
   } catch (error) {
-    storageInfo.innerHTML =
-      "<strong>💾 Storage Info:</strong> Unable to calculate";
+    storageInfo.innerHTML = "<strong>💾 Storage Info:</strong> Unable to calculate";
   }
 }
 
@@ -692,13 +579,13 @@ function updateStats() {
 
 function showRandomQuote() {
   const filteredQuotes = getFilteredQuotes();
-
+  
   if (filteredQuotes.length === 0) {
     quoteDisplay.innerHTML =
       '<div class="empty-state">No quotes available in this category</div>';
     return;
   }
-
+  
   const randomIndex = Math.floor(Math.random() * filteredQuotes.length);
   const quote = filteredQuotes[randomIndex];
   displayQuote(quote);
@@ -770,26 +657,25 @@ function addQuote() {
   const quoteCategory = categoryInput.value.trim();
 
   if (!quoteText) {
-    showNotification("Missing Text", "Please enter a quote text", "warning");
+    showNotification('Missing Text', 'Please enter a quote text', 'warning');
     textInput.focus();
     return;
   }
   if (!quoteCategory) {
-    showNotification("Missing Category", "Please enter a category", "warning");
+    showNotification('Missing Category', 'Please enter a category', 'warning');
     categoryInput.focus();
     return;
   }
 
-  // Generate new ID
-  const maxId = Math.max(0, ...quotes.map((q) => q.id || 0));
-  const newQuote = {
+  const maxId = Math.max(0, ...quotes.map(q => q.id || 0));
+  const newQuote = { 
     id: maxId + 1,
-    text: quoteText,
+    text: quoteText, 
     category: quoteCategory,
     lastModified: Date.now(),
-    source: "local",
+    source: 'local'
   };
-
+  
   quotes.push(newQuote);
   saveQuotes();
   populateCategories();
@@ -799,11 +685,7 @@ function addQuote() {
   categoryFilterSelect.value = quoteCategory;
   localStorage.setItem(CATEGORY_FILTER_KEY, quoteCategory);
   showRandomQuote();
-  showNotification(
-    "Quote Added",
-    "Your quote has been added successfully",
-    "success"
-  );
+  showNotification('Quote Added', 'Your quote has been added successfully', 'success');
 }
 
 // ========================================
@@ -816,13 +698,12 @@ function init() {
   loadLastViewedQuote();
   updateStats();
   updateStorageInfo();
-
-  // Initialize server sync and start periodic checking
+  
   setTimeout(() => {
-    syncQuotes(); // Initial sync
-    startPeriodicSync(); // Start periodic checking for new quotes
+    syncQuotes();
+    startPeriodicSync();
   }, 2000);
-
+  
   newQuoteBtn.addEventListener("click", showRandomQuote);
   toggleFormBtn.addEventListener("click", toggleAddQuoteForm);
   exportBtn.addEventListener("click", exportToJson);
@@ -830,8 +711,7 @@ function init() {
   importFile.addEventListener("change", importFromJsonFile);
 }
 
-// Cleanup on page unload
-window.addEventListener("beforeunload", () => {
+window.addEventListener('beforeunload', () => {
   stopPeriodicSync();
 });
 
